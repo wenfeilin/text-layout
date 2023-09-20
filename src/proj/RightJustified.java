@@ -15,18 +15,18 @@ public class RightJustified implements TextBlock {
   /**
    * The width that the composition will be centered in.
    */
-  int width;
+  int newWidth;
 
   // +--------------+------------------------------------------------------
   // | Constructors |
   // +--------------+
 
   /**
-   * Build a new block by aligning given block to the right within the given width.
+   * Build a new block by aligning the specified block to the right within the specified width.
    */
-  public RightJustified(TextBlock _textBlock, int _width) {
+  public RightJustified(TextBlock _textBlock, int _newWidth) {
     this.textBlock = _textBlock;
-    this.width = _width;
+    this.newWidth = _newWidth;
   } // RightJustified(TextBlock, int)
 
   // +---------+-----------------------------------------------------------
@@ -41,7 +41,7 @@ public class RightJustified implements TextBlock {
    */
   public String row(int i) throws Exception {
     int height = this.textBlock.height();
-    int newWidth = this.width;
+    int newWidth = this.newWidth;
     int oldWidth = this.textBlock.width();
     int LeftPadding = newWidth - oldWidth;
 
@@ -50,14 +50,17 @@ public class RightJustified implements TextBlock {
 
     // Sanity check
     if ((i < 0) || (i >= height)) {
+      // if the row is invalid
       throw new Exception("Invalid row " + i);
-    } // if the row is invalid
+    } else if (newWidth < 0) { 
+      // cannot have a negative width
+      throw new Exception("Negative width" + newWidth);
+    }// if the row is invalid
 
-    // have to check that newWidth is not less than textblock's width
-    // and if newWidth is negative
     String result;
     if (newWidth < oldWidth) {
-      result = this.textBlock.row(i);
+      // having a new width less than the textBlock's width will truncate the textBlock
+      result = this.textBlock.row(i).substring(0, newWidth);
     } else {
       result = padLeft.concat(this.textBlock.row(i));
     }
@@ -76,6 +79,6 @@ public class RightJustified implements TextBlock {
    * Determine how many columns are in the block.
    */
   public int width() {
-    return this.width;
+    return this.newWidth;
   } // width()
 } // class RightJustified

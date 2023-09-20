@@ -13,20 +13,20 @@ public class Centered implements TextBlock {
   TextBlock textBlock;
 
   /**
-   * The width that the composition will be centered in.
+   * The new width that the composition will be centered in.
    */
-  int width;
+  int newWidth;
 
   // +--------------+------------------------------------------------------
   // | Constructors |
   // +--------------+
 
   /**
-   * Build a new block by centering the given textblock in the given width.
+   * Build a new block by centering the specified textblock in the specified width.
    */
-  public Centered(TextBlock _textBlock, int _width) {
+  public Centered(TextBlock _textBlock, int _newWidth) {
     this.textBlock = _textBlock;
-    this.width = _width;
+    this.newWidth = _newWidth;
   } // Centered(TextBlock, int)
 
   // +---------+-----------------------------------------------------------
@@ -41,7 +41,7 @@ public class Centered implements TextBlock {
    */
   public String row(int i) throws Exception {
     int height = this.textBlock.height();
-    int newWidth = this.width;
+    int newWidth = this.newWidth;
     int oldWidth = this.textBlock.width();
     int totalPadding = newWidth - oldWidth;
 
@@ -57,15 +57,20 @@ public class Centered implements TextBlock {
 
     // Sanity check
     if ((i < 0) || (i >= height)) {
+      // if the row is invalid
       throw new Exception("Invalid row " + i);
-    } // if the row is invalid
+    } else if (newWidth < 0) { 
+      // cannot have a negative width
+      throw new Exception("Negative width" + newWidth);
+    }
 
     // have to check that newWidth is not less than textblock's width
     // and if newWidth is negative
     String result;
-    if (newWidth < oldWidth) {
-      result = this.textBlock.row(i);
-    } else {
+    if (newWidth < oldWidth) { 
+      // having a new width less than the textBlock's width will truncate the textBlock
+      result = this.textBlock.row(i).substring(0, newWidth);
+    } else { // add equal spaces on left and right side of original textBlock
       result = padLeft.concat(this.textBlock.row(i)).concat(padRight);
     }
 
@@ -83,6 +88,6 @@ public class Centered implements TextBlock {
    * Determine how many columns are in the block.
    */
   public int width() {
-    return this.width;
+    return this.newWidth;
   } // width()
 } // class Centered
