@@ -106,4 +106,15 @@ public class TBUtils {
     return t1 == t2;
   } // eq(TextBlock t1, TextBlock t2)
 
+  public static String toString(TextBlock textBlock) throws Exception {
+    int height = textBlock.height();
+    String textBlockString = "";
+ 
+    for (int i = 0; i < height - 1; i++) {
+      textBlockString += textBlock.row(i) + "\n";
+    }
+    textBlockString += textBlock.row(height - 1);
+    return textBlockString;
+  } // toString(TextBlock)
+
 } // class TBUtils
