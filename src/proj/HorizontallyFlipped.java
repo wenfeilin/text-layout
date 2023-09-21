@@ -34,8 +34,8 @@ public class HorizontallyFlipped implements TextBlock{
    */
   public String row(int i) throws Exception {
     int height = this.textBlock.height();
-    int rowWidth = this.textBlock.row(i).length();
-    int lastColumn = rowWidth - 1;
+    //int rowWidth = this.textBlock.row(i).length();
+    //int lastColumn = rowWidth - 1;
 
     // Sanity check
     if ((i < 0) || (i >= height)) {
@@ -70,8 +70,9 @@ public class HorizontallyFlipped implements TextBlock{
     return this.textBlock.width();
   } // width()
 
-  public TextBlock getContents() {
-    return textBlock;
+  public TextBlock[] getContents() {
+    TextBlock[] contents = new TextBlock[] {textBlock};
+    return contents;
   }
 
   public boolean eqv(TextBlock other) {
@@ -79,7 +80,7 @@ public class HorizontallyFlipped implements TextBlock{
 
     if (other instanceof HorizontallyFlipped) { // if both are Truncated TextBlocks,
       //proceed further comparison
-      equality = this.textBlock.eqv(other.getContents());
+      equality = this.textBlock.eqv(other.getContents()[0]);
     } else {
       equality = false;
     }

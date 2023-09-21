@@ -58,8 +58,9 @@ public class TextLine implements TextBlock {
     return this.line.length();
   } // width()
 
-  public TextBlock getContents() {
-    return this;
+  public TextBlock[] getContents() { 
+    TextBlock[] contents = new TextBlock[] {};
+    return contents;
   }
 
   public boolean eqv(TextBlock other) {

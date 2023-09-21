@@ -68,8 +68,9 @@ public class BoxedBlock implements TextBlock {
     return 2 + this.contents.width();
   } // width()
 
-  public TextBlock getContents() {
-    return contents;
+  public TextBlock[] getContents() {
+    TextBlock[] innerContents = new TextBlock[] {contents};
+    return innerContents;
   }
 
   public boolean eqv(TextBlock other) {
@@ -77,7 +78,7 @@ public class BoxedBlock implements TextBlock {
 
     if (other instanceof BoxedBlock) { // if both are Truncated TextBlocks,
       //proceed further comparison
-      equality = this.contents.eqv(other.getContents());
+      equality = this.contents.eqv(other.getContents()[0]);
     } else {
       equality = false;
     }

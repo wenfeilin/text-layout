@@ -1,5 +1,6 @@
 package lab.polymorphism;
 
+
 /**
  * The vertical composition of two text blocks.
  * 
@@ -31,7 +32,7 @@ public class VComposition implements TextBlock {
   public VComposition(TextBlock top, TextBlock bottom) {
     this.top = top;
     this.bottom = bottom;
-  } // VComposition(String)
+  } // VComposition(TextBlock, TextBlock)
 
   // +---------+-----------------------------------------------------------
   // | Methods |
@@ -86,5 +87,26 @@ public class VComposition implements TextBlock {
     // blocks.
     return Math.max(this.top.width(), this.bottom.width());
   } // width()
+
+  public TextBlock[] getContents() {
+    TextBlock[] contents = new TextBlock[] {top, bottom};
+    return contents;
+  }
+  
+  public boolean eqv(TextBlock other) {
+    boolean equalityTopPart;
+    boolean equalityBotPart;
+    boolean combinedEquality;
+
+    if (other instanceof VComposition) { // if both are Truncated TextBlocks,
+      //proceed further comparison
+      equalityTopPart = this.top.eqv(other.getContents()[0]);
+      equalityBotPart = this.bottom.eqv(other.getContents()[1]);
+      combinedEquality = equalityTopPart && equalityBotPart;
+    } else {
+      combinedEquality = false;
+    }
+    return combinedEquality;
+  } // eqv(TextBlock)
 
 } // class VComposition

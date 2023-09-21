@@ -61,7 +61,7 @@ public class Centered implements TextBlock {
       throw new Exception("Invalid row " + i);
     } else if (newWidth < 0) { 
       // cannot have a negative width
-      throw new Exception("Negative width" + newWidth);
+      throw new Exception("Negative width " + newWidth);
     }
 
     // have to check that newWidth is not less than textblock's width
@@ -91,8 +91,9 @@ public class Centered implements TextBlock {
     return this.newWidth;
   } // width()
 
-  public TextBlock getContents() {
-    return textBlock;
+  public TextBlock[] getContents() {
+    TextBlock[] contents = new TextBlock[] {textBlock};
+    return contents;
   }
 
   public boolean eqv(TextBlock other) {
@@ -100,7 +101,7 @@ public class Centered implements TextBlock {
 
     if (other instanceof Centered) { // if both are Truncated TextBlocks,
       //proceed further comparison
-      equality = this.textBlock.eqv(other.getContents());
+      equality = this.textBlock.eqv(other.getContents()[0]);
     } else {
       equality = false;
     }

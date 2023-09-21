@@ -82,8 +82,9 @@ public class RightJustified implements TextBlock {
     return this.newWidth;
   } // width()
 
-  public TextBlock getContents() {
-    return textBlock;
+  public TextBlock[] getContents() {
+    TextBlock[] contents = new TextBlock[] {textBlock};
+    return contents;
   }
 
   public boolean eqv(TextBlock other) {
@@ -91,7 +92,7 @@ public class RightJustified implements TextBlock {
 
     if (other instanceof RightJustified) { // if both are Truncated TextBlocks,
       //proceed further comparison
-      equality = this.textBlock.eqv(other.getContents());
+      equality = this.textBlock.eqv(other.getContents()[0]);
     } else {
       equality = false;
     }

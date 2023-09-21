@@ -29,7 +29,10 @@ public interface TextBlock {
   public int width();
   
 
-  public TextBlock getContents(); 
+  /** 
+   * Retrieves only the textBlock type contents of a textBlock
+   */
+  public TextBlock[] getContents(); 
 
   /**
    * Compare if this TextBlock and other are equal based on how they were created.

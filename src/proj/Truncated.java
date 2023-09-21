@@ -86,8 +86,9 @@ public class Truncated implements TextBlock {
     return this.newWidth;
   } // width()
 
-  public TextBlock getContents() {
-    return textBlock;
+  public TextBlock[] getContents() {
+    TextBlock[] contents = new TextBlock[] {textBlock};
+    return contents;
   }
   
   public boolean eqv(TextBlock other) {
@@ -95,7 +96,7 @@ public class Truncated implements TextBlock {
 
     if (other instanceof Truncated) { // if both are Truncated TextBlocks,
       //proceed further comparison
-      equality = this.textBlock.eqv(other.getContents());
+      equality = this.textBlock.eqv(other.getContents()[0]);
     } else {
       equality = false;
     }

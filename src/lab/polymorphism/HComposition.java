@@ -1,5 +1,7 @@
 package lab.polymorphism;
 
+import proj.SmileyBlock;
+
 /**
  * The horizontal composition of two text blocks.
  * 
@@ -31,7 +33,7 @@ public class HComposition implements TextBlock {
   public HComposition(TextBlock left, TextBlock right) {
     this.left = left;
     this.right = right;
-  } // HComposition(String)
+  } // HComposition(TextBlock, TextBlock)
 
   // +---------+-----------------------------------------------------------
   // | Methods |
@@ -85,5 +87,28 @@ public class HComposition implements TextBlock {
     // width of the right.
     return this.left.width() + this.right.width();
   } // width()
+
+
+  // PLACEHOLDERS
+  public TextBlock[] getContents() {
+    TextBlock[] contents = new TextBlock[] {left, right};
+    return contents;
+  }
+  
+  public boolean eqv(TextBlock other) {
+    boolean equalityLeftPart;
+    boolean equalityRightPart;
+    boolean combinedEquality;
+
+    if (other instanceof SmileyBlock) { // if both are Truncated TextBlocks,
+      //proceed further comparison
+      equalityLeftPart = this.left.eqv(other.getContents()[0]);
+      equalityRightPart = this.right.eqv(other.getContents()[1]);
+      combinedEquality = equalityLeftPart && equalityRightPart;
+    } else {
+      combinedEquality = false;
+    }
+    return combinedEquality;
+  } // eqv(TextBlock)
 
 } // class HComposition

@@ -63,8 +63,9 @@ public class VerticallyFlipped implements TextBlock{
     return this.textBlock.width();
   } // width()
 
-  public TextBlock getContents() {
-    return textBlock;
+  public TextBlock[] getContents() {
+    TextBlock[] contents = new TextBlock[] {textBlock};
+    return contents;
   }
 
   public boolean eqv(TextBlock other) {
@@ -72,7 +73,7 @@ public class VerticallyFlipped implements TextBlock{
 
     if (other instanceof VerticallyFlipped) { // if both are Truncated TextBlocks,
       //proceed further comparison
-      equality = this.textBlock.eqv(other.getContents());
+      equality = this.textBlock.eqv(other.getContents()[0]);
     } else {
       equality = false;
     }
