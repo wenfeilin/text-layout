@@ -1,5 +1,6 @@
 package lab.polymorphism;
 
+
 import java.io.PrintWriter;
 
 /**
@@ -59,7 +60,7 @@ public class TBUtils {
   /**
    * Build a sequence of spaces of a specified length.
    */
-  static String spaces(int len) {
+  public static String spaces(int len) {
     // As with dashes, this is probably overkill.
     // Make sure the collection of dashes is big enough
     while (lotsOfSpaces.length() < len) {
@@ -68,5 +69,41 @@ public class TBUtils {
     // Extract an appropriate length substring
     return lotsOfSpaces.substring(0, len);
   } // spaces(int)
+
+  public static boolean equal(TextBlock t1, TextBlock t2) {
+    PrintWriter pen = new PrintWriter(System.out, true);
+
+    int t1Height = t1.height();
+    int t2Height = t2.height();
+    int t1Width = t1.width();
+    int t2Width = t2.width();
+
+    if (!(t1Height == t2Height)) {
+      return false;
+    } else if (!(t1Width == t2Width)) {
+      return false;
+    } else {
+      for (int i = 0; i < t1Height; i++) {
+        try {
+          if (!(t1.row(i).equals(t2.row(i)))) {
+            return false;
+          }
+        } catch (Exception e) { // what is the possible exception to catch here?
+          pen.println();
+        } // catch (Exception)
+      }
+      return true;
+    }
+
+  } // equal(TextBlock t1, TextBlock t2)
+
+  public static boolean eqv(TextBlock t1, TextBlock t2) {
+     return t1.eqv(t2);
+
+  } // eqv(TextBlock t1, TextBlock t2)
+
+  public static boolean eq(TextBlock t1, TextBlock t2) {
+    return t1 == t2;
+  } // eq(TextBlock t1, TextBlock t2)
 
 } // class TBUtils

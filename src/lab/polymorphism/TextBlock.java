@@ -1,5 +1,4 @@
 package lab.polymorphism;
-
 /**
  * Simple blocks of text for a lab on polymorphism
  * 
@@ -28,5 +27,12 @@ public interface TextBlock {
    * Determine how many columns are in the block.
    */
   public int width();
+  
 
+  public TextBlock getContents(); 
+
+  /**
+   * Compare if this TextBlock and other are equal based on how they were created.
+   */
+  public boolean eqv(TextBlock other);
 } // interface TextBlock

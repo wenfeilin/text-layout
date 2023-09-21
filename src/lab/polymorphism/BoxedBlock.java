@@ -1,5 +1,6 @@
 package lab.polymorphism;
 
+
 /**
  * A text block surrounded by a box.
  *
@@ -67,4 +68,19 @@ public class BoxedBlock implements TextBlock {
     return 2 + this.contents.width();
   } // width()
 
+  public TextBlock getContents() {
+    return contents;
+  }
+
+  public boolean eqv(TextBlock other) {
+    boolean equality;
+
+    if (other instanceof BoxedBlock) { // if both are Truncated TextBlocks,
+      //proceed further comparison
+      equality = this.contents.eqv(other.getContents());
+    } else {
+      equality = false;
+    }
+    return equality;
+  } // eqv(TextBlock)
 } // class BoxedBlock

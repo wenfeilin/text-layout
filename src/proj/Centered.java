@@ -1,6 +1,6 @@
 package proj;
-
-import lab.polymorphism.*;
+import lab.polymorphism.TBUtils;
+import lab.polymorphism.TextBlock;
 
 public class Centered implements TextBlock {
   // +--------+------------------------------------------------------------
@@ -90,4 +90,21 @@ public class Centered implements TextBlock {
   public int width() {
     return this.newWidth;
   } // width()
+
+  public TextBlock getContents() {
+    return textBlock;
+  }
+
+  public boolean eqv(TextBlock other) {
+    boolean equality;
+
+    if (other instanceof Centered) { // if both are Truncated TextBlocks,
+      //proceed further comparison
+      equality = this.textBlock.eqv(other.getContents());
+    } else {
+      equality = false;
+    }
+    return equality;
+  } // eqv(TextBlock)
+  
 } // class Centered
