@@ -3,18 +3,23 @@ package proj;
 import lab.polymorphism.TBUtils;
 import lab.polymorphism.TextBlock;
 
+/**
+ * The truncation of a text block
+ * 
+ * @author Wenfei Lin
+ */
 public class Truncated implements TextBlock {
   // +--------+------------------------------------------------------------
   // | Fields |
   // +--------+
 
   /**
-   * The textblock to be truncated in the composition.
+   * The textblock to be truncated
    */
   TextBlock textBlock;
 
   /**
-   * The new width, determining truncation in the composition.
+   * The new width, determining truncation behavior
    */
   int newWidth;
 
@@ -23,11 +28,16 @@ public class Truncated implements TextBlock {
   // +--------------+
 
   /**
-   * Build a new block by truncating the given textblock to the specified width.
+   * Build a new block by truncating the given textblock to the specified width
    */
-  public Truncated(TextBlock _textBlock, int _newWidth) {
+  public Truncated(TextBlock _textBlock, int _newWidth) throws Exception {
     this.textBlock = _textBlock;
-    this.newWidth = _newWidth;
+    if (_newWidth < 0) {
+      throw new IllegalArgumentException("Negative width " + newWidth);
+    } else { 
+      // cannot have a negative width
+      this.newWidth = _newWidth;
+    }
   } // Truncated(TextBlock, int)
 
   // +---------+-----------------------------------------------------------
@@ -49,10 +59,7 @@ public class Truncated implements TextBlock {
     if ((i < 0) || (i >= height)) {
       // if the row is invalid
       throw new Exception("Invalid row " + i);
-    } else if (newWidth < 0) { 
-      // cannot have a negative width
-      throw new Exception("Negative width" + newWidth);
-    }
+    } 
 
     String result;
     
@@ -86,11 +93,18 @@ public class Truncated implements TextBlock {
     return this.newWidth;
   } // width()
 
+  /**
+   * Get the text block used to make the truncated block
+   */
   public TextBlock[] getContents() {
     TextBlock[] contents = new TextBlock[] {textBlock};
     return contents;
   }
   
+  /**
+   * Compare this truncated block to another text block, other, 
+   * and determine if they were built the same way
+   */
   public boolean eqv(TextBlock other) {
     boolean equality;
 
@@ -100,6 +114,7 @@ public class Truncated implements TextBlock {
     } else {
       equality = false;
     }
+
     return equality;
   } // eqv(TextBlock)
 } // class Truncated

@@ -1,7 +1,13 @@
 package proj;
+
 import lab.polymorphism.TBUtils;
 import lab.polymorphism.TextBlock;
 
+/**
+ * A right-justified text block
+ * 
+ * @author Wenfei Lin
+ */
 public class RightJustified implements TextBlock {
   // +--------+------------------------------------------------------------
   // | Fields |
@@ -43,10 +49,6 @@ public class RightJustified implements TextBlock {
     int height = this.textBlock.height();
     int newWidth = this.newWidth;
     int oldWidth = this.textBlock.width();
-    int LeftPadding = newWidth - oldWidth;
-
-    String padLeft = "";
-    padLeft = TBUtils.spaces(LeftPadding);
 
     // Sanity check
     if ((i < 0) || (i >= height)) {
@@ -54,7 +56,7 @@ public class RightJustified implements TextBlock {
       throw new Exception("Invalid row " + i);
     } else if (newWidth < 0) { 
       // cannot have a negative width
-      throw new Exception("Negative width" + newWidth);
+      throw new Exception("Negative width " + newWidth);
     }// if the row is invalid
 
     String result;
@@ -62,6 +64,11 @@ public class RightJustified implements TextBlock {
       // having a new width less than the textBlock's width will truncate the textBlock
       result = this.textBlock.row(i).substring(0, newWidth);
     } else {
+      int LeftPadding = newWidth - oldWidth;
+
+      String padLeft = "";
+      padLeft = TBUtils.spaces(LeftPadding);
+      
       result = padLeft.concat(this.textBlock.row(i));
     }
 
@@ -82,14 +89,21 @@ public class RightJustified implements TextBlock {
     return this.newWidth;
   } // width()
 
+  /**
+   * Get the text block used to make the right-justified block
+   */
   public TextBlock[] getContents() {
     TextBlock[] contents = new TextBlock[] {textBlock};
     return contents;
   }
-
+  
+  /**
+   * Compare this right-justified block to another text block, other, 
+   * and determine if they were built the same way
+   */
   public boolean eqv(TextBlock other) {
     boolean equality;
-
+    
     if (other instanceof RightJustified) { // if both are Truncated TextBlocks,
       //proceed further comparison
       equality = this.textBlock.eqv(other.getContents()[0]);
