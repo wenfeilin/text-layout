@@ -210,14 +210,39 @@ public class TextBlockTests {
 
   @Test
   public void widthTests() {
-    //assertEquals();
+    assertEquals("height of line with no characters", 0, noLine.width());
+    assertEquals("width of a line", 5, line.width());
+    assertEquals("width of a truncated block is the new width", 3, truncatedNormally.width());
+    assertEquals("width of a centered block is the new width", 17, centeredNormally.width());
+    assertEquals("width of a right-justified block is the new width", 17, rightJustifiedNormally.width());
 
+    assertEquals("width of an empty box", 2, emptyBox.width());
+    assertEquals("width of a boxed line", line.width() + 2, box.width());
+    assertEquals("width of a boxed line", line.width() + 2 + 2, boxInABox.width());
+    assertEquals("width of a horizontally-flipped box stays the same", box.width(), hFlippedBox.width());
+    assertEquals("width of a vertically-flipped box stays the same", 7, vFlippedTwice.width()); 
+
+    assertEquals("width of just a smiley face", 9, justSmiley.width());
+    assertEquals("width of line with a smiley face", 19, smileyLine.width());
+    assertEquals("width of tall block with a smiley face", 31, tallSmiley.width());
   } // widthTests()
 
   @Test
   public void heightTests() {
-    // assertEquals("height of a line", 1, line.height());
-    // assertEquals("height of a boxed line", 1 + 2, box.height());
+    assertEquals("height of line with no characters", 1, noLine.height());
+    assertEquals("height of a line", 1, line.height());
+    assertEquals("height of a truncated block stays the same", line.height(), truncatedNormally.height());
+    assertEquals("height of a centered block stays the same", line.height(), centeredNormally.height());
+    assertEquals("height of a right-justified block stays the same", line.height(), rightJustifiedNormally.height());
+
+    assertEquals("height of an empty box", 3, emptyBox.height());
+    assertEquals("height of a boxed line", 3, box.height());
+    assertEquals("height of a boxed line", 5, boxInABox.height());
+    assertEquals("height of a horizontally-flipped box stays the same", box.height(), hFlippedBox.height());
+    assertEquals("height of a vertically-flipped box stays the same", emptyBox.height() + box.height(), vFlippedTwice.height()); // same as the added heights of its contents
+
+    assertEquals("height of line with a smiley face", 2, smileyLine.height());
+    assertEquals("height of tall block with a smiley face", 5, tallSmiley.height());
   } // heightTests()
 
   @Test
