@@ -14,11 +14,11 @@ public class TextBlockTests {
   TextLine line, noLine;
   BoxedBlock box, boxInABox, emptyBox;
   HComposition leftRightComp;
-  VComposition topBottomComp, diffBuildSameLooks1;
+  VComposition topBottomComp, diffBuildSameLooks1, sameBuildDiffLooks1, sameBuildDiffLooks2;
   Truncated truncatedNormally, truncatedBox, notTruncated, truncatedButExpanded;
   Centered centeredNormally, notCentered, centeredUnevenly, centeredButTruncated;
-  RightJustified rightJustifiedNormally, sameBuildDiffLooks1, sameBuildDiffLooks2, notRightJustified, rightJustifiedButTruncated;
-  HorizontallyFlipped hFlippedLine, sameBuildSameLooks1, sameBuildSameLooks2, hFlippedPalindrome, hFlippedBox, hFlippedTwice, hFlippedLongBox;
+  RightJustified rightJustifiedNormally, notRightJustified, rightJustifiedButTruncated;
+  HorizontallyFlipped hFlippedLine, sameBuildSameLooks1, sameBuildSameLooks2, hFlippedPalindrome, hFlippedBox, hFlippedTwice, hFlippedLongBox, copyOfhFlippedPalindrome;
   VerticallyFlipped vFlippedLine, diffBuildSameLooks2, vFlippedShortBox, vFlippedTallBox, vFlippedTwice;
   SmileyBlock smileyLine, diffBuildDiffLooks1, diffBuildDiffLooks2, tallSmiley, smileyMouthInMiddle, smileyMouthNotInMiddle, justSmiley, longBlockSmiley, shortBlockSmiley;
 
@@ -67,43 +67,28 @@ public class TextBlockTests {
     longBlockSmiley = new SmileyBlock(new TextLine("Loooooooooooong text"));
     shortBlockSmiley = new SmileyBlock(new TextLine("short"));
 
-
-    // also need to test for HComp and VComp
-
-
-
-
-
-    // For both text blocks for comparing with equal (same lines) and 
-    // text blocks for comparing with eqv (same construction):
-
     // Built the same but looks diff
-    sameBuildDiffLooks1 = new RightJustified(new BoxedBlock(new TextLine ("potatoes")), rightJustifiedLineWidth);
-    sameBuildDiffLooks2 = new RightJustified(new BoxedBlock(new TextLine ("fries")), rightJustifiedLineWidth);
+    sameBuildDiffLooks1 = new VComposition(new RightJustified(new BoxedBlock(new TextLine("potatoes")), rightJustifiedLineWidth), emptyBox);
+    sameBuildDiffLooks2 = new VComposition(new RightJustified(new BoxedBlock(new TextLine("fries")), rightJustifiedLineWidth), emptyBox);
     
     // Built the same and looks the same
-    sameBuildSameLooks1 = new HorizontallyFlipped (new SmileyBlock(new BoxedBlock(new TextLine("Reading backwards"))));
-    sameBuildSameLooks2 = new HorizontallyFlipped (new SmileyBlock(new BoxedBlock(new TextLine("Reading backwards"))));
+    sameBuildSameLooks1 = new HorizontallyFlipped(new HComposition(new SmileyBlock(new BoxedBlock(new TextLine("Reading backwards"))), new TextLine(":D")));
+    sameBuildSameLooks2 = new HorizontallyFlipped(new HComposition(new SmileyBlock(new BoxedBlock(new TextLine("Reading backwards"))), new TextLine(":D")));
 
     // Built diff but looks the same
     diffBuildSameLooks1 = new VComposition(new BoxedBlock(line), new TextLine("in the sky"));
-    diffBuildSameLooks2 = new VerticallyFlipped (new VerticallyFlipped(new VComposition(new BoxedBlock(line), new TextLine("in the sky"))));
+    diffBuildSameLooks2 = new VerticallyFlipped(new VerticallyFlipped(new VComposition(new BoxedBlock(line), new TextLine("in the sky"))));
 
     // Built diff and looks diff
     diffBuildDiffLooks1 = new SmileyBlock(new BoxedBlock(new SmileyBlock(new TextLine(" ~   O U O   ~"))));
-    diffBuildDiffLooks1 = new SmileyBlock(new SmileyBlock(new TextLine("T n T")));
-
-    // ones built by HComp and VComp for eqv b/c those two work differently than other text blocks 
-    // (have two text blocks to consider inside it instead of one)
-
+    diffBuildDiffLooks2 = new SmileyBlock(new SmileyBlock(new TextLine("T n T")));
 
 
     // Text blocks for comparing with eq (same memory):
 
     // A text block that will be inputted as both params for eq (occupy same space)
-    // Identical text blocks but two different objects (occupy diff spaces)
-
-
+    // Identical text blocks but two different objects (occupy diff spaces):
+    copyOfhFlippedPalindrome = new HorizontallyFlipped(new TextLine("LeveL"));
   } // setUp()
 
   @Test
@@ -135,7 +120,7 @@ public class TextBlockTests {
     assertEquals("a line with a smiley face on it", 
                  "   O   Stars   O   \n" + //
                  "~        U        ~", TBUtils.toString(smileyLine));
-                 
+
 
     // Outputs of text boxes made from combinations of TextBox types + showing special behavior:
     assertEquals("line of text with nothing", "", TBUtils.toString(noLine));
@@ -225,36 +210,46 @@ public class TextBlockTests {
 
   @Test
   public void widthTests() {
-
-    
     //assertEquals();
 
-  }
+  } // widthTests()
 
   @Test
   public void heightTests() {
     // assertEquals("height of a line", 1, line.height());
     // assertEquals("height of a boxed line", 1 + 2, box.height());
-  }
+  } // heightTests()
 
   @Test
   public void equalTests() {
+    assertEquals("blocks that are identical in construction and looks", true, TBUtils.equal(sameBuildSameLooks1, sameBuildSameLooks2));
+    assertEquals("blocks that are built differently but look the same", true, TBUtils.equal(diffBuildSameLooks1, diffBuildSameLooks2));
 
-  }
+    assertEquals("blocks that are constructed the same way but look different", false, TBUtils.equal(sameBuildDiffLooks1, sameBuildDiffLooks2));
+    assertEquals("blocks that are built differently and look different", false, TBUtils.equal(diffBuildDiffLooks1, diffBuildDiffLooks2));
+
+    assertEquals("a block compared to itself", true, TBUtils.equal(hFlippedPalindrome, hFlippedPalindrome)); 
+  } // equalTests()
 
   @Test
   public void eqvTests() {
+    assertEquals("blocks that are constructed the same way but look different", true, TBUtils.eqv(sameBuildDiffLooks1, sameBuildDiffLooks2));
+    assertEquals("blocks that are identical in construction and looks", true, TBUtils.eqv(sameBuildSameLooks1, sameBuildSameLooks2));
 
-  }
+    assertEquals("blocks that are built differently but look the same", false, TBUtils.eqv(diffBuildSameLooks1, diffBuildSameLooks2));
+    assertEquals("blocks that are built differently and look different", false, TBUtils.eqv(diffBuildDiffLooks1, diffBuildDiffLooks2));
+
+    assertEquals("a block compared to itself", true, TBUtils.eqv(hFlippedPalindrome, hFlippedPalindrome)); 
+  } // eqvTest()
 
   @Test
   public void eqTests() {
+    assertEquals("blocks that are constructed the same way but look different", false, TBUtils.eq(sameBuildDiffLooks1, sameBuildDiffLooks2));
+    assertEquals("blocks that are identical in construction and looks", false, TBUtils.eq(sameBuildSameLooks1, sameBuildSameLooks2));
+    assertEquals("blocks that are built differently but look the same", false, TBUtils.eq(diffBuildSameLooks1, diffBuildSameLooks2));
+    assertEquals("blocks that are built differently and look different", false, TBUtils.eq(diffBuildDiffLooks1, diffBuildDiffLooks2));
 
-  }
-
-  @Test
-  public void getContentsTests() {
-
-  }
-  // } // 
-}
+    assertEquals("a block compared to itself", true, TBUtils.eq(hFlippedPalindrome, hFlippedPalindrome)); 
+    assertEquals("a block compared to a copy of itself but in a different memory location", false, TBUtils.eq(hFlippedPalindrome, copyOfhFlippedPalindrome)); 
+  } // eqTests()
+} // class TextBlockTests
