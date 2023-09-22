@@ -4,7 +4,7 @@ import lab.polymorphism.TBUtils;
 import lab.polymorphism.TextBlock;
 
 /**
- * A right-justified text block
+ * A right-justified text block.
  * 
  * @author Wenfei Lin
  */
@@ -14,12 +14,12 @@ public class RightJustified implements TextBlock {
   // +--------+
 
   /**
-   * The textblock to be centered in the composition.
+   * The textblock to be right-justified in the composition.
    */
   TextBlock textBlock;
 
   /**
-   * The width that the composition will be centered in.
+   * The width that the composition will be right-justified in.
    */
   int newWidth;
 
@@ -28,11 +28,20 @@ public class RightJustified implements TextBlock {
   // +--------------+
 
   /**
-   * Build a new block by aligning the specified block to the right within the specified width.
+   * Build a new block by aligning the specified block to the right within 
+   * the specified width.
+   * 
+   * @pre _newWidth >= 0
+   * @exception Exception if the precondition is not met
    */
-  public RightJustified(TextBlock _textBlock, int _newWidth) {
+  public RightJustified(TextBlock _textBlock, int _newWidth) throws Exception {
     this.textBlock = _textBlock;
-    this.newWidth = _newWidth;
+    if (_newWidth < 0) {
+      throw new IllegalArgumentException("Negative width " + newWidth);
+    } else { 
+      // cannot have a negative width
+      this.newWidth = _newWidth;
+    }
   } // RightJustified(TextBlock, int)
 
   // +---------+-----------------------------------------------------------
@@ -54,21 +63,19 @@ public class RightJustified implements TextBlock {
     if ((i < 0) || (i >= height)) {
       // if the row is invalid
       throw new Exception("Invalid row " + i);
-    } else if (newWidth < 0) { 
-      // cannot have a negative width
-      throw new Exception("Negative width " + newWidth);
-    }// if the row is invalid
+    } 
 
     String result;
     if (newWidth < oldWidth) {
-      // having a new width less than the textBlock's width will truncate the textBlock
+      // Having a new width less than the textBlock's width will truncate the textBlock
       result = this.textBlock.row(i).substring(0, newWidth);
     } else {
+      // Otherwise, add spaces to the left of original textBlock until newWidth
       int LeftPadding = newWidth - oldWidth;
-
       String padLeft = "";
+
+      // Make the spaces for padding
       padLeft = TBUtils.spaces(LeftPadding);
-      
       result = padLeft.concat(this.textBlock.row(i));
     }
 
@@ -79,23 +86,24 @@ public class RightJustified implements TextBlock {
    * Determine how many rows are in the block.
    */
   public int height() {
-    return this.textBlock.height();
+    return this.textBlock.height(); // same
   } // height()
 
   /**
    * Determine how many columns are in the block.
    */
   public int width() {
-    return this.newWidth;
+    return this.newWidth; // same
   } // width()
 
   /**
    * Get the text block used to make the right-justified block
    */
   public TextBlock[] getContents() {
+    // Only input the textBlock used to make the right-justified block in the array
     TextBlock[] contents = new TextBlock[] {textBlock};
     return contents;
-  }
+  } // getContents()
   
   /**
    * Compare this right-justified block to another text block, other, 
@@ -104,10 +112,12 @@ public class RightJustified implements TextBlock {
   public boolean eqv(TextBlock other) {
     boolean equality;
     
-    if (other instanceof RightJustified) { // if both are Truncated TextBlocks,
-      //proceed further comparison
+    if (other instanceof RightJustified) { // If other is also a RightJustified TextBlock,
+      //proceed to further comparison (comparing the contents of each)
       equality = this.textBlock.eqv(other.getContents()[0]);
     } else {
+      // Otherwise, only this text block is a RightJustified TextBlock, 
+      // so they are not built the same way
       equality = false;
     }
     return equality;

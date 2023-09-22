@@ -4,7 +4,7 @@ package lab.polymorphism;
  * One line of text.
  * 
  * @author Samuel A. Rebelsky
- * @version 1.3 of February 2019
+ * @author Wenfei Lin
  */
 public class TextLine implements TextBlock {
   // +--------+------------------------------------------------------------
@@ -58,12 +58,23 @@ public class TextLine implements TextBlock {
     return this.line.length();
   } // width()
 
+  /**
+   * Get the text block used to make the text line
+   */
   public TextBlock[] getContents() { 
+    // There is no text block used to make a TextLine, only a String
+    // This is just a requirement from the interface, but nothing is put into the array
     TextBlock[] contents = new TextBlock[] {};
     return contents;
-  }
-
-  public boolean eqv(TextBlock other) {
+  } // getContents()
+  
+  /**
+   * Compare this text line to another text block, other, and determine if they are the same type
+   */ 
+  public boolean eqv(TextBlock other) { 
+    // If other is also a TextLine, confirm the two are built the same way 
+    // TextLines are the lowest level of TextBlocks and are used to compose
+    // other text blocks so the lowest level in any text block is a TextLine
     return other instanceof TextLine;
   } // eqv(TextBlock)
 } // class TextLine

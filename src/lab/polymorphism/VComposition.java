@@ -1,11 +1,10 @@
 package lab.polymorphism;
 
-
 /**
  * The vertical composition of two text blocks.
  * 
  * @author Samuel A. Rebelsky
- * @version 1.2 of February 2019
+ * @author Wenfei Lin
  */
 public class VComposition implements TextBlock {
   // +--------+------------------------------------------------------------
@@ -88,22 +87,33 @@ public class VComposition implements TextBlock {
     return Math.max(this.top.width(), this.bottom.width());
   } // width()
 
+  /**
+   * Get the text blocks used to make the vertically-composed block
+   */
   public TextBlock[] getContents() {
+    // Input the textBlocks used to make the vertically-composed block in the array
     TextBlock[] contents = new TextBlock[] {top, bottom};
     return contents;
-  }
+  } // getContents()
   
+  /**
+   * Compare this vertically-composed block to another text block, other, 
+   * and determine if they were built the same way
+   */
   public boolean eqv(TextBlock other) {
     boolean equalityTopPart;
     boolean equalityBotPart;
     boolean combinedEquality;
 
-    if (other instanceof VComposition) { // if both are Truncated TextBlocks,
-      //proceed further comparison
+    if (other instanceof VComposition) { // If other is also a VComposition TextBlock,
+      // proceed to further comparison (comparing the contents of each: top part
+      // to top part and bottom part to bottom part)
       equalityTopPart = this.top.eqv(other.getContents()[0]);
       equalityBotPart = this.bottom.eqv(other.getContents()[1]);
       combinedEquality = equalityTopPart && equalityBotPart;
     } else {
+      // Otherwise, only this text block is a VComposition TextBlock, 
+      // so they are not built the same way
       combinedEquality = false;
     }
     return combinedEquality;

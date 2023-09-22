@@ -4,7 +4,7 @@ import lab.polymorphism.TBUtils;
 import lab.polymorphism.TextBlock;
 
 /**
- * A text block that is centered
+ * A text block that is centered.
  * 
  * @author Wenfei Lin
  */
@@ -28,11 +28,20 @@ public class Centered implements TextBlock {
   // +--------------+
 
   /**
-   * Build a new block by centering the specified textblock in the specified width.
+   * Build a new block by centering the specified textblock in the specified 
+   * width.
+   * 
+   * @pre _newWidth >= 0
+   * @exception Exception if the precondition is not met
    */
-  public Centered(TextBlock _textBlock, int _newWidth) {
+  public Centered(TextBlock _textBlock, int _newWidth) throws Exception{
     this.textBlock = _textBlock;
-    this.newWidth = _newWidth;
+    if (_newWidth < 0) {
+      throw new IllegalArgumentException("Negative width " + newWidth);
+    } else { 
+      // cannot have a negative width
+      this.newWidth = _newWidth;
+    }    
   } // Centered(TextBlock, int)
 
   // +---------+-----------------------------------------------------------
@@ -43,6 +52,7 @@ public class Centered implements TextBlock {
    * Get one row from the block.
    * 
    * @pre 0 <= i < this.height()
+   * @pre this.newWidth >= 0
    * @exception Exception if the precondition is not met
    */
   public String row(int i) throws Exception {
@@ -54,26 +64,25 @@ public class Centered implements TextBlock {
     if ((i < 0) || (i >= height)) {
       // if the row is invalid
       throw new Exception("Invalid row " + i);
-    } else if (newWidth < 0) { 
-      // cannot have a negative width
-      throw new Exception("Negative width " + newWidth);
-    }
+    } 
 
-    // have to check that newWidth is not less than textblock's width
-    // and if newWidth is negative
     String result;
     if (newWidth < oldWidth) { 
-      // having a new width less than the textBlock's width will truncate the textBlock
+      // Having a new width less than the textBlock's width will truncate the textBlock
       result = this.textBlock.row(i).substring(0, newWidth);
-    } else { // add equal spaces on left and right side of original textBlock
+    } else { 
+      // Otherwise, add equal spaces on left and right side of original textBlock until newWidth
       int totalPadding = newWidth - oldWidth;
 
       String padLeft = "";
       String padRight = "";
       if (totalPadding % 2 == 0) {
+        // Equal left and right padding if the total padding was even
         padLeft = TBUtils.spaces(totalPadding / 2);
         padRight = TBUtils.spaces(totalPadding / 2);
       } else {
+        // Unequal left and right padding if the total padding was even
+        // The new text block will be slightly to the right of the center
         padLeft = TBUtils.spaces(totalPadding / 2 + 1);
         padRight = TBUtils.spaces(totalPadding / 2);
       }
@@ -88,38 +97,40 @@ public class Centered implements TextBlock {
    * Determine how many rows are in the block.
    */
   public int height() {
-    return this.textBlock.height();
+    return this.textBlock.height(); // same
   } // height()
 
   /**
    * Determine how many columns are in the block.
    */
   public int width() {
-    return this.newWidth;
+    return this.newWidth; // same
   } // width()
 
   /**
-   * Get the text block used to make the centered block
+   * Get the text block used to make the centered block.
    */
   public TextBlock[] getContents() {
+    // Only input the textBlock used to make the centered block in the array
     TextBlock[] contents = new TextBlock[] {textBlock};
     return contents;
-  }
+  } // getContents()
 
   /**
    * Compare this centered block to another text block, other, 
-   * and determine if they were built the same way
+   * and determine if they were built the same way.
    */
   public boolean eqv(TextBlock other) {
     boolean equality;
 
-    if (other instanceof Centered) { // if both are Truncated TextBlocks,
-      //proceed further comparison
+    if (other instanceof Centered) { // If other is also a Centered TextBlock,
+      // proceed to further comparison (comparing the contents of each)
       equality = this.textBlock.eqv(other.getContents()[0]);
     } else {
+      // Otherwise, only this text block is a Centered TextBlock, 
+      // so they are not built the same way
       equality = false;
     }
     return equality;
   } // eqv(TextBlock)
-  
 } // class Centered

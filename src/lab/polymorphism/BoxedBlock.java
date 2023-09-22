@@ -1,11 +1,10 @@
 package lab.polymorphism;
 
-
 /**
  * A text block surrounded by a box.
  *
  * @author Samuel A. Rebelsky
- * @version 1.2 of February 2019
+ * @author Wenfei Lin
  */
 public class BoxedBlock implements TextBlock {
   // +--------+------------------------------------------------------------
@@ -13,7 +12,7 @@ public class BoxedBlock implements TextBlock {
   // +--------+
 
   /**
-   * The stuff in the box
+   * The stuff in the box.
    */
   TextBlock contents;
 
@@ -68,18 +67,28 @@ public class BoxedBlock implements TextBlock {
     return 2 + this.contents.width();
   } // width()
 
+  /**
+   * Get the text block used to make the boxed block.
+   */
   public TextBlock[] getContents() {
+    // Only input the textBlock used to make the boxed block in the array
     TextBlock[] innerContents = new TextBlock[] {contents};
     return innerContents;
-  }
-
+  } // getContents()
+  
+  /**
+   * Compare this boxed block to another text block, other, 
+   * and determine if they were built the same way
+   */
   public boolean eqv(TextBlock other) {
     boolean equality;
 
-    if (other instanceof BoxedBlock) { // if both are Truncated TextBlocks,
-      //proceed further comparison
+    if (other instanceof BoxedBlock) { // If other is also a BoxedBlock,
+      // proceed to further comparison (comparing the contents of each)
       equality = this.contents.eqv(other.getContents()[0]);
     } else {
+      // Otherwise, only this text block is a BoxedBlock, 
+      // so they are not built the same way
       equality = false;
     }
     return equality;

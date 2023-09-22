@@ -87,23 +87,33 @@ public class HComposition implements TextBlock {
   } // width()
 
 
-  // PLACEHOLDERS
+  /**
+   * Get the text blocks used to make the horizontally-composed block
+   */
   public TextBlock[] getContents() {
+    // Input the textBlocks used to make the horizontally-composed block in the array
     TextBlock[] contents = new TextBlock[] {left, right};
     return contents;
-  }
+  } // getContents()
   
+  /**
+   * Compare this horizontally-composed block to another text block, other, 
+   * and determine if they were built the same way
+   */
   public boolean eqv(TextBlock other) {
     boolean equalityLeftPart;
     boolean equalityRightPart;
     boolean combinedEquality;
 
-    if (other instanceof HComposition) { // if both are Truncated TextBlocks,
-      //proceed further comparison
+    if (other instanceof HComposition) { // If other is also a HComposition TextBlock,
+      // proceed to further comparison (comparing the contents of each: left part
+      // to left part and right part to right part)
       equalityLeftPart = this.left.eqv(other.getContents()[0]);
       equalityRightPart = this.right.eqv(other.getContents()[1]);
       combinedEquality = equalityLeftPart && equalityRightPart;
     } else {
+      // Otherwise, only this text block is a HComposition TextBlock, 
+      // so they are not built the same way
       combinedEquality = false;
     }
     return combinedEquality;

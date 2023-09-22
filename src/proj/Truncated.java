@@ -4,7 +4,7 @@ import lab.polymorphism.TBUtils;
 import lab.polymorphism.TextBlock;
 
 /**
- * The truncation of a text block
+ * The truncation of a text block.
  * 
  * @author Wenfei Lin
  */
@@ -14,12 +14,12 @@ public class Truncated implements TextBlock {
   // +--------+
 
   /**
-   * The textblock to be truncated
+   * The textblock to be truncated.
    */
   TextBlock textBlock;
 
   /**
-   * The new width, determining truncation behavior
+   * The new width, determining truncation behavior.
    */
   int newWidth;
 
@@ -28,7 +28,11 @@ public class Truncated implements TextBlock {
   // +--------------+
 
   /**
-   * Build a new block by truncating the given textblock to the specified width
+   * Build a new block by truncating the given textblock to the specified 
+   * width.
+   * 
+   * @pre _newWidth < 0
+   * @exception Exception if the precondition is not met
    */
   public Truncated(TextBlock _textBlock, int _newWidth) throws Exception {
     this.textBlock = _textBlock;
@@ -64,14 +68,14 @@ public class Truncated implements TextBlock {
     String result;
     
     if (newWidth > oldWidth) { 
-      // if the width of the new textBlock is greater than the original width, 
+      // If the width of the new textBlock is greater than the original width, 
       // then add spaces to the right of the original textBlock
       int numofSpaces = newWidth - oldWidth;
       String padRight = TBUtils.spaces(numofSpaces);
 
       result = this.textBlock.row(i).concat(padRight);
     } else {
-      // truncate contents of textBlock to only include contents up to the new width 
+      // Otherwise, truncate contents of textBlock to only include contents up to the new width 
       // of the textBlock
       result = this.textBlock.row(i).substring(0, newWidth);
     }
@@ -94,24 +98,27 @@ public class Truncated implements TextBlock {
   } // width()
 
   /**
-   * Get the text block used to make the truncated block
+   * Get the text block used to make the truncated block.
    */
   public TextBlock[] getContents() {
+    // Only input the textBlock used to make the truncated block in the array
     TextBlock[] contents = new TextBlock[] {textBlock};
     return contents;
-  }
+  } // getContents()
   
   /**
    * Compare this truncated block to another text block, other, 
-   * and determine if they were built the same way
+   * and determine if they were built the same way.
    */
   public boolean eqv(TextBlock other) {
     boolean equality;
 
-    if (other instanceof Truncated) { // if both are Truncated TextBlocks,
-      //proceed further comparison
+    if (other instanceof Truncated) { // If other is also a Truncated TextBlock,
+      //proceed to further comparison (comparing the contents of each)
       equality = this.textBlock.eqv(other.getContents()[0]);
     } else {
+      // Otherwise, only this text block is a Truncated TextBlock, 
+      // so they are not built the same way
       equality = false;
     }
 
