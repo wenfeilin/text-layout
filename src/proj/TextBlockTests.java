@@ -11,359 +11,684 @@ import org.junit.Test;
  * @author Wenfei Lin
  */
 public class TextBlockTests {
-  TextLine line, noLine;
+  // Basic Text Blocks to build more complex text blocks or for edge case testing
+  TextLine line, emptyLine;
   BoxedBlock box, boxInABox, emptyBox;
-  HComposition leftRightComp;
-  VComposition topBottomComp, diffBuildSameLooks1, sameBuildDiffLooks1, sameBuildDiffLooks2;
-  Truncated truncatedNormally, truncatedBox, notTruncated, truncatedButExpanded, 
-            truncatedEverything;
-  Centered centeredNormally, notCentered, centeredUnevenly, centeredButTruncated, 
-            centeredTruncatedEverything;
-  RightJustified rightJustifiedNormally, notRightJustified, rightJustifiedButTruncated, 
-                  rightJustifiedTruncatedEverything;
-  HorizontallyFlipped hFlippedLine, sameBuildSameLooks1, sameBuildSameLooks2, hFlippedPalindrome,
-                      hFlippedBox, hFlippedTwice, hFlippedLongBox, copyOfhFlippedPalindrome;
-  VerticallyFlipped vFlippedLine, diffBuildSameLooks2, vFlippedShortBox, vFlippedTallBox, 
-                    vFlippedTwice;
-  SmileyBlock smileyLine, diffBuildDiffLooks1, diffBuildDiffLooks2, tallSmiley, 
-              smileyMouthInMiddle, smileyMouthNotInMiddle, justSmiley, longBlockSmiley, 
-              shortBlockSmiley;
+
+  // Text Blocks for eqv, equal, and eq tests
+  VComposition sameBuildDiffLooksObj1, sameBuildDiffLooksObj2, diffBuildSameLooksObj1;
+  HorizontallyFlipped sameBuildSameLooksObj1, sameBuildSameLooksObj2, hFlippedPalindrome, 
+      copyOfhFlippedPalindrome;
+  VerticallyFlipped diffBuildSameLooksObj2;
+  SmileyBlock diffBuildDiffLooksObj1, diffBuildDiffLooksObj2;
+
+  // Some standard blocks of each type for block combination tests:
+  Centered aCenteredBlock;
+  RightJustified aRightJustifiedBlock;
+  SmileyBlock aSmileyBlock;
+  Truncated aTruncatedBlock;
+  HorizontallyFlipped aHorizontallyFlippedBlock;
+  VerticallyFlipped aVerticallyFlippedBlock;
 
   /**
-   * The setup of TextBlock objects to be used in the tests.
-   * 
-   * @throws Exception
+   * The setup of some TextBlock objects to be used in the tests.
    */
   @Before
   public void setUp() throws Exception {
-    int centeredLineWidth = 17;
     int rightJustifiedLineWidth = 17;
-    int truncatedLineWidth = 3;
-    int sameLineWidth = 5; // width of "Stars" line
 
-    // TextBoxes composed of TextLines only:
+    // Basic Text Boxes to build with in following tests:
     line = new TextLine("Stars");
     box = new BoxedBlock(line);
-    leftRightComp = new HComposition(new TextLine("Little "), line);
-    topBottomComp = new VComposition(line, line);
-    truncatedNormally = new Truncated(line, truncatedLineWidth);
-    centeredNormally = new Centered(line, centeredLineWidth);
-    rightJustifiedNormally = new RightJustified(line, rightJustifiedLineWidth);
-    hFlippedLine = new HorizontallyFlipped(line);
-    vFlippedLine = new VerticallyFlipped(line);
-    smileyLine = new SmileyBlock(line);
-
-    // Some combinations of TextBox types + showcase various cases + edge cases:
-    noLine = new TextLine("");
-    emptyBox = new BoxedBlock(noLine);
+    emptyLine = new TextLine("");
+    emptyBox = new BoxedBlock(emptyLine);
     boxInABox = new BoxedBlock(new BoxedBlock(line));
-    tallSmiley = new SmileyBlock(new VComposition(new BoxedBlock
-        (new TextLine("ABOVE THE")), line));
-    vFlippedShortBox = new VerticallyFlipped(new BoxedBlock(line));
-    vFlippedTallBox = new VerticallyFlipped(new VComposition(new BoxedBlock
-        (new TextLine("Thing ONE")), new BoxedBlock(new TextLine("Thing TWO"))));
-    vFlippedTwice = new VerticallyFlipped(new VerticallyFlipped(new VComposition(emptyBox, box)));
+
+    // Standard text blocks for block combination tests:
+    aCenteredBlock = new Centered(line, 13);
+    aRightJustifiedBlock = new RightJustified(line, 12);
+    aSmileyBlock = new SmileyBlock(line);
+    aTruncatedBlock = new Truncated(line, 3);
+    aHorizontallyFlippedBlock = new HorizontallyFlipped(line);
+    aVerticallyFlippedBlock = new VerticallyFlipped(line);
+
+    // Text Blocks for testing eqv, equal, eq methods:
+
+    // Text Blocks that are built the same but look different
+    sameBuildDiffLooksObj1 = new VComposition(new RightJustified(
+        new BoxedBlock(new TextLine("potatoes")), rightJustifiedLineWidth), emptyBox);
+    sameBuildDiffLooksObj2 = new VComposition(new RightJustified(
+        new BoxedBlock(new TextLine("fries")), rightJustifiedLineWidth), emptyBox);
+
+    // Text Blocks that are built the same and look the same
+    sameBuildSameLooksObj1 = new HorizontallyFlipped(new HComposition(new SmileyBlock(
+        new BoxedBlock(new TextLine("Reading backwards"))), new TextLine(":D")));
+    sameBuildSameLooksObj2 = new HorizontallyFlipped(new HComposition(new SmileyBlock(
+        new BoxedBlock(new TextLine("Reading backwards"))), new TextLine(":D")));
+
+    // Text Blocks that are built different but look the same
+    diffBuildSameLooksObj1 = new VComposition(new BoxedBlock(line),
+        new TextLine("in the sky"));
+    diffBuildSameLooksObj2 = new VerticallyFlipped(new VerticallyFlipped(new VComposition(
+        new BoxedBlock(line), new TextLine("in the sky"))));
+
+    // Text Blocks that are built different and look different
+    diffBuildDiffLooksObj1 = new SmileyBlock(new BoxedBlock(new SmileyBlock(
+        new TextLine(" ~   O U O   ~"))));
+    diffBuildDiffLooksObj2 = new SmileyBlock(new SmileyBlock(new TextLine("T n T")));
+
+    // Visually identical text blocks but two different objects (occupy different
+    // spaces in memory):
     hFlippedPalindrome = new HorizontallyFlipped(new TextLine("LeveL"));
-    hFlippedBox = new HorizontallyFlipped(box);
-    hFlippedTwice = new HorizontallyFlipped(hFlippedBox);
-    hFlippedLongBox = new HorizontallyFlipped(new HComposition(box, boxInABox)); 
-    truncatedBox = new Truncated(box, truncatedLineWidth);
-    truncatedEverything = new Truncated(line, 0);
-    notCentered = new Centered(line, sameLineWidth);
-    centeredUnevenly = new Centered(line, sameLineWidth + 1);
-    centeredButTruncated = new Centered(line, truncatedLineWidth);
-    centeredTruncatedEverything = new Centered(line, 0);
-    notTruncated = new Truncated(line, sameLineWidth);
-    truncatedButExpanded = new Truncated(line, sameLineWidth + 1);
-    notRightJustified = new RightJustified(line, sameLineWidth);
-    rightJustifiedButTruncated = new RightJustified(line, truncatedLineWidth);
-    rightJustifiedTruncatedEverything = new RightJustified(line, 0);
-    smileyMouthInMiddle = new SmileyBlock(line);
-    smileyMouthNotInMiddle = new SmileyBlock(new TextLine("Uneven"));
-    justSmiley = new SmileyBlock(noLine);
-    longBlockSmiley = new SmileyBlock(new TextLine("Loooooooooooong text"));
-    shortBlockSmiley = new SmileyBlock(new TextLine("short"));
-
-    // Built the same but looks diff
-    sameBuildDiffLooks1 = new VComposition(new RightJustified(new BoxedBlock
-        (new TextLine("potatoes")), rightJustifiedLineWidth), emptyBox);
-    sameBuildDiffLooks2 = new VComposition(new RightJustified(new BoxedBlock
-        (new TextLine("fries")), rightJustifiedLineWidth), emptyBox);
-    
-    // Built the same and looks the same
-    sameBuildSameLooks1 = new HorizontallyFlipped(new HComposition(new SmileyBlock(new BoxedBlock
-        (new TextLine("Reading backwards"))), new TextLine(":D")));
-    sameBuildSameLooks2 = new HorizontallyFlipped(new HComposition(new SmileyBlock(new BoxedBlock
-        (new TextLine("Reading backwards"))), new TextLine(":D")));
-
-    // Built diff but looks the same
-    diffBuildSameLooks1 = new VComposition(new BoxedBlock(line), 
-                                            new TextLine("in the sky"));
-    diffBuildSameLooks2 = new VerticallyFlipped(new VerticallyFlipped
-        (new VComposition(new BoxedBlock(line), new TextLine("in the sky"))));
-
-    // Built diff and looks diff
-    diffBuildDiffLooks1 = new SmileyBlock(new BoxedBlock(new SmileyBlock
-        (new TextLine(" ~   O U O   ~"))));
-    diffBuildDiffLooks2 = new SmileyBlock(new SmileyBlock(new TextLine("T n T")));
-
-
-    // Text blocks for comparing with eq (same memory):
-
-    // A text block that will be inputted as both params for eq (occupy same space)
-    // Identical text blocks but two different objects (occupy diff spaces):
     copyOfhFlippedPalindrome = new HorizontallyFlipped(new TextLine("LeveL"));
   } // setUp()
 
+  // Centered Blocks
+
   /**
-   * Tests to check that what is printed by the TextBlock is the same as what is expected 
+   * Tests to check that what is printed by the centered TextBlock is the same as
+   * what is expected
    * to be printed.
-   * 
-   * @throws Exception
+   * TBUtils.toString(TextBlock) uses the row(int) method from TextBlocks,
+   * so if the output from the former method is equal to the expected String,
+   * then row(int) shows expected behavior (`row` works as a method)
    */
   @Test
-  public void rowTests() throws Exception {
-    // TBUtils.toString(TextBlock) uses the row(int) method from TextBlocks,
-    // so if the output from the former method is equal to the expected String, 
-    // then row(int) shows expected behavior (`row` works as a method)
+  public void centeredBlockRowTests() throws Exception {
+    Centered sameWidthCentered = new Centered(line, 5);
+    Centered centeredNormally = new Centered(line, 17);
+    Centered centeredUnevenly = new Centered(line, 6);
+    Centered smallWidthCentered = new Centered(line, 3);
+    Centered width0Centered = new Centered(line, 0);
 
-    // Outputs of text boxes composed of TextLines only:
-    assertEquals("a single line", "Stars", TBUtils.toString(line));
-    assertEquals("a box with a line inside", 
-                "+-----+\n" + //
-                "|Stars|\n" + //
-                "+-----+", 
-                 TBUtils.toString(box));
+    assertEquals("centering with the same width does nothing", "Stars",
+        TBUtils.toString(sameWidthCentered));
+    assertEquals("even centering", "      Stars      ",
+        TBUtils.toString(centeredNormally));
+    assertEquals("uneven centering", " Stars",
+        TBUtils.toString(centeredUnevenly));
+    assertEquals("centering with width less than TextBlock's width truncates block", "Sta",
+        TBUtils.toString(smallWidthCentered));
+    assertEquals("centering with new width of 0", "",
+        TBUtils.toString(width0Centered));
+  } // centeredBlockRowTests()
 
-    assertEquals("a horizontal composition of two same lines", "Little Stars", 
-                  TBUtils.toString(leftRightComp));
-    assertEquals("a vertical composition of two same lines", 
-                 "Stars\n" + //
-                 "Stars", TBUtils.toString(topBottomComp));
+  /**
+   * Tests for confirming the width and height of centered TextBlocks.
+   */
+  @Test
+  public void centeredBlockWidthHeightTests() throws Exception {
+    Centered centeredBlock = new Centered(line, 20);
+
+    assertEquals("width of a centered block is the new width", 20, centeredBlock.width());
+    assertEquals("height of a centered block stays the same", 1,
+        centeredBlock.height());
+  } // centeredBlockWidthHeightTests()
+
+  /**
+   * Tests for proper centering of other Text Block types and for Centered block
+   * types.
+   */
+  @Test
+  public void centeredBlockCombinationTests() throws Exception {
+    // centering a centered block:
+    assertTrue(TBUtils.equal(new TextLine("        Stars        "), 
+        new Centered(aCenteredBlock, 21)));
+
+    // centering a horizontally-flipped block:
+    assertTrue(TBUtils.equal(new TextLine("        sratS        "), 
+        new Centered(aHorizontallyFlippedBlock, 21)));
+
+    // centering a right-justified block:
+    assertTrue(TBUtils.equal(new TextLine("            Stars     "), 
+        new Centered(aRightJustifiedBlock, 22)));
+
+    // centering a smiley block:
+    assertTrue(TBUtils.equal(new VComposition(new TextLine("    O   Stars   O    "), 
+        new TextLine(" ~        U        ~ ")),
+        new Centered(aSmileyBlock, 21)));
+
+    // centering a truncated block:
+    assertTrue(TBUtils.equal(new TextLine("         Sta         "), 
+        new Centered(aTruncatedBlock, 21)));
+
+    // centering a vertically-flipped block:
+    assertTrue(TBUtils.equal(new TextLine("        Stars        "), 
+        new Centered(aVerticallyFlippedBlock, 21)));
+  } // centeredBlockCombinationTests()
+
+  /**
+   * Tests for empty centered blocks (edge case)
+   */
+  @Test
+  public void emptyCenteredBlockTest() throws Exception {
+    Centered emptyCenteredBlock = new Centered(emptyLine, 3);
+    assertEquals("   ", TBUtils.toString(emptyCenteredBlock));
+  } // emptyCenteredBlockTest()
+
+  // Right Justified Blocks
+
+  /**
+   * Tests to check that what is printed by the right-justified TextBlock is the
+   * same as what is expected
+   * to be printed.
+   * TBUtils.toString(TextBlock) uses the row(int) method from TextBlocks,
+   * so if the output from the former method is equal to the expected String,
+   * then row(int) shows expected behavior (`row` works as a method)
+   */
+  @Test
+  public void rightJustifiedBlockRowTests() throws Exception {
+    RightJustified rightJustifiedNormally = new RightJustified(line, 17);
+    RightJustified noRightJustification = new RightJustified(line, 5);
+    RightJustified smallWidthRightJustified = new RightJustified(line, 3);
+    RightJustified width0RightJustified = new RightJustified(line, 0);
+
+    assertEquals("a line right-justified within a width of 17", "            Stars",
+        TBUtils.toString(rightJustifiedNormally));
+    assertEquals("right-justifying with the same width does nothing", "Stars",
+        TBUtils.toString(noRightJustification));
+    assertEquals("", "Sta", TBUtils.toString(smallWidthRightJustified));
+    assertEquals("right-justifying with new width of 0", "",
+        TBUtils.toString(width0RightJustified));
+  } // rightJustifiedBlockRowTests()
+
+  /**
+   * Tests for confirming the width and height of right-justified TextBlocks.
+   */
+  @Test
+  public void rightJustifiedBlockWidthHeightTests() throws Exception {
+    RightJustified rightJustifiedBlock = new RightJustified(line, 20);
+
+    assertEquals("width of a right-justified block is the new width", 20,
+        rightJustifiedBlock.width());
+    assertEquals("height of a right-justified block stays the same", line.height(),
+        rightJustifiedBlock.height());
+  } // rightJustifiedBlockWidthHeightTests()
+
+  /**
+   * Tests for proper right justification of other Text Block types and for
+   * RightJustified block types.
+   */
+  @Test
+  public void rightJustifiedBlockCombinationTests() throws Exception {
+    // right-justifying a right-justified block:
+    assertTrue(TBUtils.equal(new TextLine("                Stars"), 
+        new RightJustified(aRightJustifiedBlock, 21)));
+
+    // right-justifying a centered block:
+    assertTrue(TBUtils.equal(new TextLine("            Stars    "), 
+        new RightJustified(aCenteredBlock, 21)));
+
+    // right-justifying a horizontally-flipped block:
+    assertTrue(TBUtils.equal(new TextLine("                sratS"), 
+        new RightJustified(aHorizontallyFlippedBlock, 21)));
+
+    // right-justifying a smiley block:
+    assertTrue(TBUtils.equal(new VComposition(new TextLine("     O   Stars   O   "), 
+        new TextLine("  ~        U        ~")),
+        new RightJustified(aSmileyBlock, 21)));
+
+    // right-justifying a truncated block:
+    assertTrue(TBUtils.equal(new TextLine("                  Sta"), 
+        new RightJustified(aTruncatedBlock, 21)));
+
+    // right-justifying a vertically-flipped block:
+    assertTrue(TBUtils.equal(new TextLine("                Stars"), 
+        new RightJustified(aVerticallyFlippedBlock, 21)));
+  } // rightJustifiedBlockCombinationTests()
+
+  /**
+   * Tests for empty right-justified blocks (edge case)
+   */
+  @Test
+  public void emptyRightJustifiedBlockTests() throws Exception {
+    RightJustified emptyRightJustifiedBlock = new RightJustified(emptyLine, 3);
+    assertEquals("   ", TBUtils.toString(emptyRightJustifiedBlock));
+  } // emptyRightJustifiedBlockTests()
+
+  // Smiley Blocks
+
+  /**
+   * Tests to check that what is printed by the smiley TextBlock is the same as
+   * what is expected
+   * to be printed.
+   * TBUtils.toString(TextBlock) uses the row(int) method from TextBlocks,
+   * so if the output from the former method is equal to the expected String,
+   * then row(int) shows expected behavior (`row` works as a method)
+   */
+  @Test
+  public void smileyBlockRowTests() throws Exception {
+    SmileyBlock smileyTextLine = new SmileyBlock(line);
+    SmileyBlock smileyMouthInMiddle = new SmileyBlock(line);
+    SmileyBlock smileyMouthNotInMiddle = new SmileyBlock(new TextLine("Uneven"));
+    SmileyBlock longSmileyBlock = new SmileyBlock(new TextLine("Loooooooooooong text"));
+    SmileyBlock shortSmileyBlock = new SmileyBlock(new TextLine("short"));
+    SmileyBlock tallSmileyBlock = new SmileyBlock(new VComposition(new BoxedBlock(
+        new TextLine("ABOVE THE")), line));
+
+    assertEquals("a line with a smiley face on it",
+        "   O   Stars   O   \n" +
+            "~        U        ~",
+        TBUtils.toString(smileyTextLine));
+    assertEquals("mouth is centered under the text block",
+        "   O   Stars   O   \n" +
+            "~        U        ~",
+        TBUtils.toString(smileyMouthInMiddle));
+    assertEquals("mouth is not centered under the text block",
+        "   O   Uneven   O   \n" +
+            "~         U        ~",
+        TBUtils.toString(smileyMouthNotInMiddle));
+    assertEquals("example of spacing increasing in creation of smileyBlock" +
+        "when given a longer block",
+        "   O          Loooooooooooong text          O   \n" +
+            "~                       U                      ~",
+        TBUtils.toString(longSmileyBlock));
+    assertEquals("example of spacing decreasing in creation of smileyBlock" +
+        "when given a shorter block",
+        "   O   short   O   \n" +
+            "~        U        ~",
+        TBUtils.toString(shortSmileyBlock));
+    assertEquals("smiley face on a tall vertical composition",
+        "          +---------+          \n" +
+            "          |ABOVE THE|          \n" +
+            "   O      +---------+      O   \n" +
+            "          Stars                \n" +
+            "~              U              ~",
+        TBUtils.toString(tallSmileyBlock));
+  } // smileyBlockRowTests()
+
+  /**
+   * Tests for confirming the width and height of smiley TextBlocks.
+   */
+  @Test
+  public void smileyBlockWidthHeightTests() throws Exception {
+    SmileyBlock emptySmileyBlock = new SmileyBlock(emptyLine);
+    SmileyBlock smileyTextLine = new SmileyBlock(line);
+    SmileyBlock tallSmileyBlock = new SmileyBlock(new VComposition(new BoxedBlock(
+        new TextLine("ABOVE THE")), line));
+
+    assertEquals("width of just a smiley face", 9, emptySmileyBlock.width());
+    assertEquals("width of line with a smiley face", 19, smileyTextLine.width());
+
+    assertEquals("height of line with a smiley face", 2, smileyTextLine.height());
+    assertEquals("height of tall block with a smiley face", 5, tallSmileyBlock.height());
+  } // smileyBlockWidthHeightTests()
+
+  /**
+   * Tests for proper transformation into a smiley block of other Text Block types
+   * and for SmileyBlock block types.
+   */
+  @Test
+  public void smileyBlockCombinationTests() throws Exception {
+    // turning a smiley block into a smiley block:
+    assertTrue(TBUtils.equal(
+        new VComposition(new VComposition(
+          new TextLine("                 O   Stars   O                 "),
+          new TextLine("   O          ~        U        ~          O   ")),
+          new TextLine("~                      U                      ~")),
+        new SmileyBlock(aSmileyBlock)));
+    // turning a right-justified block into a smiley block:
+    assertTrue(TBUtils.equal(new VComposition(new TextLine("   O             Stars      O"),
+        new TextLine("~               U              ~")), new SmileyBlock(aRightJustifiedBlock)));
+    // turning a centered block into a smiley block:
+    assertTrue(TBUtils.equal(new VComposition(new TextLine("   O           Stars           O   "),
+        new TextLine("~                U                ~")), new SmileyBlock(aCenteredBlock)));
+    // turning a horizontally-flipped block into a smiley block:
+    assertTrue(TBUtils.equal(new VComposition(new TextLine("   O   sratS   O   "), 
+        new TextLine("~        U        ~")),
+        new SmileyBlock(aHorizontallyFlippedBlock)));
+    // turning a truncated block into a smiley block:
+    assertTrue(TBUtils.equal(new VComposition(new TextLine("   O  Sta  O   "), 
+        new TextLine("~      U      ~")),
+        new SmileyBlock(aTruncatedBlock)));
+    // turning a vertically-flipped block into a smiley block:
+    assertTrue(TBUtils.equal(new VComposition(new TextLine("   O   Stars   O   "), 
+        new TextLine("~        U        ~")),
+        new SmileyBlock(aVerticallyFlippedBlock)));
+  } // smileyBlockCombinationTests()
+
+  /**
+   * Tests for empty smiley blocks (edge case)
+   */
+  @Test
+  public void emptySmileyBlockTests() throws Exception {
+    SmileyBlock emptySmileyBlock = new SmileyBlock(emptyLine);
+    assertEquals("   O O   \n" +
+        "~   U   ~", TBUtils.toString(emptySmileyBlock));
+  } // emptySmileyBlockTests()
+
+  // Truncated Blocks
+
+  /**
+   * Tests to check that what is printed by the truncated TextBlock is the same as
+   * what is expected
+   * to be printed.
+   * TBUtils.toString(TextBlock) uses the row(int) method from TextBlocks,
+   * so if the output from the former method is equal to the expected String,
+   * then row(int) shows expected behavior (`row` works as a method)
+   */
+  @Test
+  public void truncatedBlockRowTests() throws Exception {
+    Truncated truncatedNormally = new Truncated(line, 3);
+    Truncated truncatedBox = new Truncated(box, 3);
+    Truncated width0TruncatedBlock = new Truncated(line, 0);
+    Truncated sameWidthTruncatedBlock = new Truncated(line, 5);
+    Truncated largeWidthTruncatedBlock = new Truncated(line, 6);
 
     assertEquals("a line truncated to width of three", "Sta", TBUtils.toString(truncatedNormally));
-    assertEquals("a line within a width of 17", "      Stars      ", 
-                  TBUtils.toString(centeredNormally));
-    assertEquals("a line right-justified within a width of 17", "            Stars", 
-                  TBUtils.toString(rightJustifiedNormally));
+    assertEquals("truncating with the same width does nothing", "Stars",
+        TBUtils.toString(sameWidthTruncatedBlock));
+    assertEquals("truncating with a larger width expands the text block", "Stars ",
+        TBUtils.toString(largeWidthTruncatedBlock));
+    assertEquals("truncating a box",
+        "+--\n" +
+            "|St\n" +
+            "+--",
+        TBUtils.toString(truncatedBox));
+    assertEquals("truncating with new width of 0", "", TBUtils.toString(width0TruncatedBlock));
+  } // truncatedBlockRowTests()
 
-    assertEquals("a horizontally-flipped line", "sratS", TBUtils.toString(hFlippedLine));
-    assertEquals("a vertically-flipped line", "Stars", TBUtils.toString(vFlippedLine));
+  /**
+   * Tests for confirming the width and height of truncated TextBlocks.
+   */
+  @Test
+  public void truncatedBlockWidthHeightTests() throws Exception {
+    Truncated truncatedBlock = new Truncated(line, 2);
 
-    assertEquals("a line with a smiley face on it", 
-                 "   O   Stars   O   \n" + //
-                 "~        U        ~", TBUtils.toString(smileyLine));
+    assertEquals("width of a truncated block is the new width", 2, truncatedBlock.width());
+    assertEquals("height of a truncated block stays the same", line.height(),
+        truncatedBlock.height());
+  } // truncatedBlockWidthHeightTests()
 
+  /**
+   * Tests for proper truncation of other Text Block types and for Truncated block
+   * types.
+   */
+  @Test
+  public void truncatedBlockCombinationTests() throws Exception {
+    // truncating a truncated block:
+    assertTrue(TBUtils.equal(new TextLine("S"), new Truncated(aTruncatedBlock, 1)));
 
-    // Outputs of text boxes made from combinations of TextBox types + showing special behavior:
-    assertEquals("line of text with nothing", "", TBUtils.toString(noLine));
-    assertEquals("box border only", 
-                 "++\n" + //
-                 "||\n" + //
-                 "++", TBUtils.toString(emptyBox));
-    assertEquals("a box in a box",
-                 "+-------+\n" + //
-                 "|+-----+|\n" + //
-                 "||Stars||\n" + //
-                 "|+-----+|\n" + //
-                 "+-------+", TBUtils.toString(boxInABox));
+    // truncating a smiley block:
+    assertTrue(
+        TBUtils.equal(new VComposition(new TextLine("   O "), new TextLine("~    ")), 
+        new Truncated(aSmileyBlock, 5)));
 
-    assertEquals("vertically flipping a box of height 3 does nothing", 
-                 "+-----+\n" + //
-                 "|Stars|\n" + //
-                 "+-----+", TBUtils.toString(vFlippedShortBox));
-    assertEquals("vertically flipping a vertical composition of two different boxes", 
-                 "+---------+\n" + //
-                 "|Thing TWO|\n" + //
-                 "+---------+\n" + //
-                 "+---------+\n" + //
-                 "|Thing ONE|\n" + //
-                 "+---------+", TBUtils.toString(vFlippedTallBox));
-    assertEquals("vertically flipping a vertical composition twice does nothing", 
-                 "++     \n" + //
-                 "||     \n" + //
-                 "++     \n" + //
-                 "+-----+\n" + //
-                 "|Stars|\n" + //
-                 "+-----+", TBUtils.toString(vFlippedTwice));
+    // truncating a right-justified block:
+    assertTrue(TBUtils.equal(new TextLine("     "), new Truncated(aRightJustifiedBlock, 5)));
 
-    assertEquals("horizontally flipping a palindrome word does nothing", 
-                 "LeveL", TBUtils.toString(hFlippedPalindrome));
+    // truncating a centered block:
+    assertTrue(TBUtils.equal(new TextLine("    S"), new Truncated(aCenteredBlock, 5)));
+
+    // truncating a horizontally-flipped block:
+    assertTrue(TBUtils.equal(new TextLine("sratS"), new Truncated(aHorizontallyFlippedBlock, 5)));
+
+    // truncating a vertically-flipped block:
+    assertTrue(TBUtils.equal(new TextLine("Stars"), new Truncated(aVerticallyFlippedBlock, 5)));
+  } // truncatedBlockCombinationTests()
+
+  /**
+   * Tests for empty truncated blocks (edge case)
+   */
+  @Test
+  public void emptyTruncatedBlockTests() throws Exception {
+    Truncated emptyTruncatedBlock = new Truncated(emptyLine, 7);
+    assertEquals("       ", TBUtils.toString(emptyTruncatedBlock));
+  } // emptyTruncatedBlockTests()
+
+  // Horizontally Flipped Blocks
+
+  /**
+   * Tests to check that what is printed by the horizontally-flipped TextBlock is
+   * the same as what is expected
+   * to be printed.
+   * TBUtils.toString(TextBlock) uses the row(int) method from TextBlocks,
+   * so if the output from the former method is equal to the expected String,
+   * then row(int) shows expected behavior (`row` works as a method)
+   */
+  @Test
+  public void horizontallyFlippedBlockRowTests() throws Exception {
+    HorizontallyFlipped hFlippedTextLine = new HorizontallyFlipped(line);
+    HorizontallyFlipped hFlippedPalindrome = new HorizontallyFlipped(new TextLine("LeveL"));
+    HorizontallyFlipped hFlippedBox = new HorizontallyFlipped(box);
+    HorizontallyFlipped twiceHFlippedBlock = new HorizontallyFlipped(hFlippedBox);
+    HorizontallyFlipped hFlippedLongBox = new HorizontallyFlipped(
+        new HComposition(box, boxInABox));
+
+    assertEquals("a horizontally-flipped line", "sratS", TBUtils.toString(hFlippedTextLine));
+    assertEquals("horizontally flipping a palindrome word does nothing",
+        "LeveL", TBUtils.toString(hFlippedPalindrome));
     assertEquals("horizontally flipped box",
-                 "+-----+\n" + //
-                 "|sratS|\n" + //
-                 "+-----+", TBUtils.toString(hFlippedBox));
-    assertEquals("a box flipped horizontally twice is the original unflipped box", 
-                 "+-----+\n" + //
-                 "|Stars|\n" + //
-                 "+-----+", TBUtils.toString(hFlippedTwice));
-    assertEquals("two horizontally-composed boxes flipped horizontally", 
-                 "+-------++-----+\n" + //
-                 "|+-----+||sratS|\n" + //
-                 "||sratS||+-----+\n" + //
-                 "|+-----+|       \n" + //
-                 "+-------+       ", TBUtils.toString(hFlippedLongBox));
-
-    assertEquals("centering with the same width does nothing", "Stars", 
-                  TBUtils.toString(notCentered));
-    assertEquals("centering is uneven due to new width", " Stars",  
-                  TBUtils.toString(centeredUnevenly));
-    assertEquals("centering with width less than TextBlock's width truncates block", "Sta", 
-                  TBUtils.toString(centeredButTruncated));
-    assertEquals("centering with new width of 0", "", 
-                  TBUtils.toString(centeredTruncatedEverything));
-
-    assertEquals("truncating with the same width does nothing", "Stars", 
-                  TBUtils.toString(notTruncated));
-    assertEquals("truncating with a larger width expands the text block", "Stars ", 
-                  TBUtils.toString(truncatedButExpanded));
-    assertEquals("", 
-                 "+--\n" + //
-                 "|St\n" + //
-                 "+--", TBUtils.toString(truncatedBox));
-    assertEquals("truncating with new width of 0", "", TBUtils.toString(truncatedEverything));
-
-    assertEquals("right-justifying with the same width does nothing", "Stars", 
-                  TBUtils.toString(notRightJustified));
-    assertEquals("", "Sta", TBUtils.toString(rightJustifiedButTruncated));
-    assertEquals("right-justifying with new width of 0", "", 
-                  TBUtils.toString(rightJustifiedTruncatedEverything));
-
-    assertEquals("mouth is centered under the text block", 
-                 "   O   Stars   O   \n" + //
-                 "~        U        ~", TBUtils.toString(smileyMouthInMiddle));
-    assertEquals("mouth is not centered under the text block", 
-                 "   O   Uneven   O   \n" + //
-                 "~         U        ~", TBUtils.toString(smileyMouthNotInMiddle));
-    assertEquals("", 
-                 "   O O   \n" + //
-                 "~   U   ~", TBUtils.toString(justSmiley));
-    assertEquals("example of spacing increasing in creation of smileyBlock" + //
-                "when given a longer block",
-                 "   O          Loooooooooooong text          O   \n" + //
-                 "~                       U                      ~", 
-                TBUtils.toString(longBlockSmiley));
-    assertEquals("example of spacing decreasing in creation of smileyBlock" + // 
-                "when given a shorter block", 
-                 "   O   short   O   \n" + //
-                 "~        U        ~", TBUtils.toString(shortBlockSmiley));
-    assertEquals("smiley face on a tall vertical composition", 
-                 "          +---------+          \n" + //
-                 "          |ABOVE THE|          \n" + //
-                 "   O      +---------+      O   \n" + //
-                 "          Stars                \n" + //
-                 "~              U              ~", TBUtils.toString(tallSmiley));
-  } // rowTests()
+        "+-----+\n" +
+            "|sratS|\n" +
+            "+-----+",
+        TBUtils.toString(hFlippedBox));
+    assertEquals("a box flipped horizontally twice is the original unflipped box",
+        "+-----+\n" +
+            "|Stars|\n" +
+            "+-----+",
+        TBUtils.toString(twiceHFlippedBlock));
+    assertEquals("two horizontally-composed boxes flipped horizontally",
+        "+-------++-----+\n" +
+            "|+-----+||sratS|\n" +
+            "||sratS||+-----+\n" +
+            "|+-----+|       \n" +
+            "+-------+       ",
+        TBUtils.toString(hFlippedLongBox));
+  } // horizontallyFlippedBlockRowTests()
 
   /**
-   * Tests for confirming the width of TextBlocks.
+   * Tests for confirming the width and height of horizontally-flipped TextBlocks.
    */
   @Test
-  public void widthTests() {
-    assertEquals("height of line with no characters", 0, noLine.width());
-    assertEquals("width of a line", 5, line.width());
-    assertEquals("width of a truncated block is the new width", 3, truncatedNormally.width());
-    assertEquals("width of a centered block is the new width", 17, centeredNormally.width());
-    assertEquals("width of a right-justified block is the new width", 17, 
-                  rightJustifiedNormally.width());
+  public void horizontallyFlippedBlockWidthHeightTests() throws Exception {
+    HorizontallyFlipped hFlippedBox = new HorizontallyFlipped(box);
 
-    assertEquals("width of an empty box", 2, emptyBox.width());
-    assertEquals("width of a boxed line", line.width() + 2, box.width());
-    assertEquals("width of a boxed line", line.width() + 2 + 2, boxInABox.width());
-    assertEquals("width of a horizontally-flipped box stays the same", box.width(), 
-                  hFlippedBox.width());
-    assertEquals("width of a vertically-flipped box stays the same", 7, vFlippedTwice.width()); 
-
-    assertEquals("width of just a smiley face", 9, justSmiley.width());
-    assertEquals("width of line with a smiley face", 19, smileyLine.width());
-    assertEquals("width of tall block with a smiley face", 31, tallSmiley.width());
-  } // widthTests()
+    assertEquals("width of a horizontally-flipped box stays the same", box.width(),
+        hFlippedBox.width());
+    assertEquals("height of a horizontally-flipped box stays the same", box.height(),
+        hFlippedBox.height());
+  } // horizontallyFlippedBlockWidthHeightTests()
 
   /**
-   * Tests for confirming the height of TextBlocks.
+   * Tests for proper horizontal flipping of other Text Block types and for
+   * HorizontallyFlipped block types.
    */
   @Test
-  public void heightTests() {
-    assertEquals("height of line with no characters", 1, noLine.height());
-    assertEquals("height of a line", 1, line.height());
-    assertEquals("height of a truncated block stays the same", line.height(), 
-                  truncatedNormally.height());
-    assertEquals("height of a centered block stays the same", line.height(), 
-                  centeredNormally.height());
-    assertEquals("height of a right-justified block stays the same", line.height(), 
-                  rightJustifiedNormally.height());
+  public void horizontallyFlippedBlockCombinationTests() throws Exception {
+    // horizontally-flipping a horizontally-flipped block:
+    assertTrue(TBUtils.equal(new TextLine("Stars"), 
+        new HorizontallyFlipped(aHorizontallyFlippedBlock)));
 
-    assertEquals("height of an empty box", 3, emptyBox.height());
-    assertEquals("height of a boxed line", 3, box.height());
-    assertEquals("height of a boxed line", 5, boxInABox.height());
-    assertEquals("height of a horizontally-flipped box stays the same", box.height(), 
-                  hFlippedBox.height());
-    assertEquals("height of a vertically-flipped box stays the same", 
-                  emptyBox.height() + box.height(), vFlippedTwice.height()); 
-                  // same as the added heights of its contents
+    // horizontally-flipping a truncated block:
+    assertTrue(TBUtils.equal(new TextLine("atS"), new HorizontallyFlipped(aTruncatedBlock)));
 
-    assertEquals("height of line with a smiley face", 2, smileyLine.height());
-    assertEquals("height of tall block with a smiley face", 5, tallSmiley.height());
-  } // heightTests()
+    // horizontally-flipping a smiley block:
+    assertTrue(TBUtils.equal(new VComposition(new TextLine("   O   sratS   O   "), 
+        new TextLine("~        U        ~")),
+        new HorizontallyFlipped(aSmileyBlock)));
+
+    // horizontally-flipping a right-justified block:
+    assertTrue(TBUtils.equal(new TextLine("sratS       "), 
+        new HorizontallyFlipped(aRightJustifiedBlock)));
+
+    // horizontally-flipping a centered block:
+    assertTrue(TBUtils.equal(new TextLine("    sratS    "), 
+        new HorizontallyFlipped(aCenteredBlock)));
+
+    // horizontally-flipping a vertically-flipped block:
+    assertTrue(TBUtils.equal(new TextLine("sratS"), 
+        new HorizontallyFlipped(aVerticallyFlippedBlock)));
+  } // horizontallyFlippedBlockCombinationTests()
 
   /**
-   * Tests for confirming if equal method can discern text blocks that look the same 
+   * Tests for empty horizontally-flipped blocks (edge case)
+   */
+  @Test
+  public void emptyHorizontallyFlippedBlockTests() throws Exception {
+    HorizontallyFlipped emptyHorizontallyFlippedBlock = new HorizontallyFlipped(emptyLine);
+    assertEquals("", TBUtils.toString(emptyHorizontallyFlippedBlock));
+  } // emptyHorizontallyFlippedBlockTests()
+
+  // Vertically Flipped Blocks
+
+  /**
+   * Tests to check that what is printed by the vertically-flipped TextBlock is
+   * the same as what is expected
+   * to be printed.
+   * TBUtils.toString(TextBlock) uses the row(int) method from TextBlocks,
+   * so if the output from the former method is equal to the expected String,
+   * then row(int) shows expected behavior (`row` works as a method)
+   */
+  @Test
+  public void verticallyFlippedBlockRowTests() throws Exception {
+    VerticallyFlipped vFlippedTextLine = new VerticallyFlipped(line);
+    VerticallyFlipped shortVFlippedBox = new VerticallyFlipped(new BoxedBlock(line));
+    VerticallyFlipped tallVFlippedBox = new VerticallyFlipped(
+        new VComposition(new BoxedBlock(new TextLine("Thing ONE")), 
+        new BoxedBlock(new TextLine("Thing TWO"))));
+    VerticallyFlipped twiceVerticallyFlippedBlock = new VerticallyFlipped(
+        new VerticallyFlipped(new VComposition(emptyBox, box)));
+
+    assertEquals("a vertically-flipped line", "Stars", TBUtils.toString(vFlippedTextLine));
+    assertEquals("vertically flipping a box of height 3 does nothing",
+        "+-----+\n" +
+            "|Stars|\n" +
+            "+-----+",
+        TBUtils.toString(shortVFlippedBox));
+    assertEquals("vertically flipping a vertical composition of two different boxes",
+        "+---------+\n" +
+            "|Thing TWO|\n" +
+            "+---------+\n" +
+            "+---------+\n" +
+            "|Thing ONE|\n" +
+            "+---------+",
+        TBUtils.toString(tallVFlippedBox));
+    assertEquals("vertically flipping a vertical composition twice does nothing",
+        "++     \n" +
+            "||     \n" +
+            "++     \n" +
+            "+-----+\n" +
+            "|Stars|\n" +
+            "+-----+",
+        TBUtils.toString(twiceVerticallyFlippedBlock));
+  } // verticallyFlippedBlockRowTests()
+
+  /**
+   * Tests for confirming the width and height of vertically-flipped TextBlocks.
+   */
+  @Test
+  public void verticallyFlippedBlockWidthHeightTests() throws Exception {
+    VerticallyFlipped tallVFlippedBox = new VerticallyFlipped(
+        new VComposition(new BoxedBlock(new TextLine("1")), new BoxedBlock(new TextLine("2"))));
+
+    assertEquals("width of a vertically-flipped box stays the same", 3, tallVFlippedBox.width());
+    assertEquals("height of a vertically-flipped box stays the same",
+        3 + 3, tallVFlippedBox.height());
+    // same as the added heights of its contents
+  } // verticallyFlippedBlockWidthHeightTests()
+
+  /**
+   * Tests for proper vertical flipping of other Text Block types and for
+   * VerticallyFlipped block types.
+   */
+  @Test
+  public void verticallyFlippedBlockCombinationTests() throws Exception {
+    // vertically-flipping a vertically-flipped block:
+    assertTrue(TBUtils.equal(new TextLine("Stars"), 
+        new VerticallyFlipped(aVerticallyFlippedBlock)));
+
+    // vertically-flipping a horizontally-flipped block:
+    assertTrue(TBUtils.equal(new TextLine("sratS"), 
+        new VerticallyFlipped(aHorizontallyFlippedBlock)));
+
+    // vertically-flipping a truncated block:
+    assertTrue(TBUtils.equal(new TextLine("Sta"), new VerticallyFlipped(aTruncatedBlock)));
+
+    // vertically-flipping a smiley block:
+    assertTrue(TBUtils.equal(new VComposition(new TextLine("~        U        ~"), 
+        new TextLine("   O   Stars   O   ")),
+        new VerticallyFlipped(aSmileyBlock)));
+
+    // vertically-flipping a right-justified block:
+    assertTrue(TBUtils.equal(new TextLine("       Stars"), 
+        new VerticallyFlipped(aRightJustifiedBlock)));
+
+    // vertically-flipping a centered block:
+    assertTrue(TBUtils.equal(new TextLine("    Stars    "), 
+        new VerticallyFlipped(aCenteredBlock)));
+  } // verticallyFlippedBlockCombinationTests()
+
+  /**
+   * Tests for empty vertically-flipped blocks (edge case)
+   */
+  @Test
+  public void emptyVerticallyFlippedBlockTests() throws Exception {
+    VerticallyFlipped emptyVerticallyFlippedBlock = new VerticallyFlipped(emptyLine);
+    assertEquals("", TBUtils.toString(emptyVerticallyFlippedBlock));
+  } // emptyVerticallyFlippedBlockTests()
+
+  // equal, eqv, and eq Method Tests
+
+  /**
+   * Tests for confirming if equal method can discern text blocks that look the
+   * same
    * when printed from those that do not.
    */
   @Test
   public void equalTests() {
-    assertEquals("blocks that are identical in construction and looks", true, 
-                  TBUtils.equal(sameBuildSameLooks1, sameBuildSameLooks2));
-    assertEquals("blocks that are built differently but look the same", true, 
-                  TBUtils.equal(diffBuildSameLooks1, diffBuildSameLooks2));
+    assertEquals("blocks that are identical in construction and looks", true,
+        TBUtils.equal(sameBuildSameLooksObj1, sameBuildSameLooksObj2));
+    assertEquals("blocks that are built differently but look the same", true,
+        TBUtils.equal(diffBuildSameLooksObj1, diffBuildSameLooksObj2));
 
-    assertEquals("blocks that are constructed the same way but look different", false, 
-                  TBUtils.equal(sameBuildDiffLooks1, sameBuildDiffLooks2));
-    assertEquals("blocks that are built differently and look different", false, 
-                  TBUtils.equal(diffBuildDiffLooks1, diffBuildDiffLooks2));
+    assertEquals("blocks that are constructed the same way but look different", false,
+        TBUtils.equal(sameBuildDiffLooksObj1, sameBuildDiffLooksObj2));
+    assertEquals("blocks that are built differently and look different", false,
+        TBUtils.equal(diffBuildDiffLooksObj1, diffBuildDiffLooksObj2));
 
-    assertEquals("a block compared to itself", true, 
-                  TBUtils.equal(hFlippedPalindrome, hFlippedPalindrome)); 
+    assertEquals("a block compared to itself", true,
+        TBUtils.equal(hFlippedPalindrome, hFlippedPalindrome));
   } // equalTests()
 
   /**
-   * Tests for confirming if eqv method can discern text blocks that are built 
+   * Tests for confirming if eqv method can discern text blocks that are built
    * the same way from those that are not.
    */
   @Test
   public void eqvTests() {
-    assertEquals("blocks that are constructed the same way but look different", true, 
-                  TBUtils.eqv(sameBuildDiffLooks1, sameBuildDiffLooks2));
-    assertEquals("blocks that are identical in construction and looks", true, 
-                  TBUtils.eqv(sameBuildSameLooks1, sameBuildSameLooks2));
+    assertEquals("blocks that are constructed the same way but look different", true,
+        TBUtils.eqv(sameBuildDiffLooksObj1, sameBuildDiffLooksObj2));
+    assertEquals("blocks that are identical in construction and looks", true,
+        TBUtils.eqv(sameBuildSameLooksObj1, sameBuildSameLooksObj2));
 
-    assertEquals("blocks that are built differently but look the same", false, 
-                  TBUtils.eqv(diffBuildSameLooks1, diffBuildSameLooks2));
-    assertEquals("blocks that are built differently and look different", false, 
-                  TBUtils.eqv(diffBuildDiffLooks1, diffBuildDiffLooks2));
+    assertEquals("blocks that are built differently but look the same", false,
+        TBUtils.eqv(diffBuildSameLooksObj1, diffBuildSameLooksObj2));
+    assertEquals("blocks that are built differently and look different", false,
+        TBUtils.eqv(diffBuildDiffLooksObj1, diffBuildDiffLooksObj2));
 
-    assertEquals("a block compared to itself", true, 
-                  TBUtils.eqv(hFlippedPalindrome, hFlippedPalindrome)); 
+    assertEquals("a block compared to itself", true,
+        TBUtils.eqv(hFlippedPalindrome, hFlippedPalindrome));
   } // eqvTest()
 
   /**
-   * Tests for confirming if eq method can discern text blocks that occupy 
+   * Tests for confirming if eq method can discern text blocks that occupy
    * the same space in memory from those that do not.
    */
   @Test
   public void eqTests() {
-    assertEquals("blocks that are constructed the same way but look different", false, 
-                  TBUtils.eq(sameBuildDiffLooks1, sameBuildDiffLooks2));
-    assertEquals("blocks that are identical in construction and looks", false, 
-                  TBUtils.eq(sameBuildSameLooks1, sameBuildSameLooks2));
-    assertEquals("blocks that are built differently but look the same", false, 
-                  TBUtils.eq(diffBuildSameLooks1, diffBuildSameLooks2));
-    assertEquals("blocks that are built differently and look different", false, 
-                  TBUtils.eq(diffBuildDiffLooks1, diffBuildDiffLooks2));
+    assertEquals("blocks that are constructed the same way but look different", false,
+        TBUtils.eq(sameBuildDiffLooksObj1, sameBuildDiffLooksObj2));
+    assertEquals("blocks that are identical in construction and looks", false,
+        TBUtils.eq(sameBuildSameLooksObj1, sameBuildSameLooksObj2));
+    assertEquals("blocks that are built differently but look the same", false,
+        TBUtils.eq(diffBuildSameLooksObj1, diffBuildSameLooksObj2));
+    assertEquals("blocks that are built differently and look different", false,
+        TBUtils.eq(diffBuildDiffLooksObj1, diffBuildDiffLooksObj2));
 
-    assertEquals("a block compared to itself", true, 
-                  TBUtils.eq(hFlippedPalindrome, hFlippedPalindrome)); 
+    assertEquals("a block compared to itself", true,
+        TBUtils.eq(hFlippedPalindrome, hFlippedPalindrome));
     assertEquals("a block compared to a copy of itself but in a different memory location", false,
-                  TBUtils.eq(hFlippedPalindrome, copyOfhFlippedPalindrome)); 
+        TBUtils.eq(hFlippedPalindrome, copyOfhFlippedPalindrome));
   } // eqTests()
 } // class TextBlockTests
