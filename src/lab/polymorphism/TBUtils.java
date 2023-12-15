@@ -7,6 +7,7 @@ import java.io.PrintWriter;
  * Utilities for TextBlocks.
  * 
  * @author Samuel A. Rebelsky
+ * @author Wenfei Lin
  * @version 1.3 of September 2014
  */
 public class TBUtils {
